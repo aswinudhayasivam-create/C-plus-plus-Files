@@ -1,0 +1,3 @@
+Hello, this is a test file.
+This file is created using C++.
+File handling is important for data storage.

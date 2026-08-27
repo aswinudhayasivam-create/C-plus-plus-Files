@@ -1,0 +1,9 @@
+User: ASWIN
+Time: Sat Mar 28 15:15:57 2026
+Items:
+Veg Burger - Rs.100
+Farmhouse - Rs.300
+Total: Rs.400
+Payment: Card
+Status: Delivered
+----------------------
