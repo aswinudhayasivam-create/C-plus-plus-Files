@@ -3,7 +3,7 @@ using namespace std;
 
 template <class X> void bubble(X *items , int count )
 {
-    register int a , b ;
+    int a , b ;
     X t;
 
     for ( a = 1 ; a < count ; a++ )

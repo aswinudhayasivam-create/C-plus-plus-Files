@@ -16,7 +16,7 @@ double add(double a,double b)
     return c;
 
 }
-int add(int a[],int b[],int n){
+void add(const int a[], const int b[], int n) {
     cout<<"\nArray addition :";
     for(int i=0;i<n;i++)
     cout<<a[i]+b[i]<<" ";
@@ -36,6 +36,10 @@ int main()
     int x[50],y[50],n;
     cout<<"Enter the size of the array:";
     cin>>n;
+    if (n < 0 || n > 50) {
+        cout << "Array size must be between 0 and 50.\n";
+        return 1;
+    }
     for(int i=0;i<n;i++){
     cout<<"Enter values for Array 1:";
     cin>>x[i];}
@@ -48,9 +52,6 @@ int main()
     cout<<b<<endl;
     cout<<c<<endl;
     cout<<d<<endl;
-    cout<<x<<endl;
-    cout<<y<<endl;
-
     cout<<"Integer addition : "<< add(a,b)<<endl;
     cout<<"Double addition : "<< add(c,d)<<endl;
 

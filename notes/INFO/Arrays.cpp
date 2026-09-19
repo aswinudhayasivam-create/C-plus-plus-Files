@@ -1,15 +1,20 @@
 #include<iostream>
 #include<string>
+#include<vector>
 
 using namespace std;
 int main()
 {
-    int n,i;
+    int n;
     cout<<"Enter the sizeof the array:";
     cin>>n;
-    string cars[n];
+    if (n < 0) {
+        cout << "Array size cannot be negative.\n";
+        return 1;
+    }
+    vector<string> cars(n);
     cout<<"Enter the cars names:\n";
-    for(i=0;i<n;i++)
+    for(int i=0;i<n;i++)
     {
         cin>>cars[i];
     }
