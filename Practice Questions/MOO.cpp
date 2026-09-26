@@ -14,8 +14,18 @@ public:
         cols = c;
     }
 
+    bool isValid()
+    {
+        return rows > 0 && cols > 0;
+    }
+
     void inp()
     {
+        if(!isValid())
+        {
+            cout<<"Invalid matrix dimensions\n";
+            return;
+        }
         cout<<"Enter matrix elements:\n";
 
         for(int i=0;i<rows;i++)
@@ -29,6 +39,11 @@ public:
 
     void display()
     {
+        if(!isValid())
+        {
+            cout<<"Invalid matrix dimensions\n";
+            return;
+        }
         for(int i=0;i<rows;i++)
         {
             for(int j=0;j<cols;j++)
@@ -106,22 +121,36 @@ public:
 
         return mul;
     }
+
     void boundary()
     {
-    for(int i=0;i<cols;i++)
-    {
-        cout<<mat[0][i]<<" ";
-    }
-    cout<<endl;
-    for(int i=1;i<rows-1;i++)
-    {
-        cout<<mat[i][0]<<" ";
-        cout<<mat[i][cols-1]<<" ";
+        if(!isValid())
+        {
+            cout<<"Invalid matrix dimensions\n";
+            return;
+        }
+        
+        for(int i=0;i<cols;i++)
+        {
+            cout<<mat[0][i]<<" ";
+        }
         cout<<endl;
-    }
-    for(int i=0;i<cols;i++)
-    {
-        cout<<mat[rows-1][i]<<" ";
+        
+        for(int i=1;i<rows-1;i++)
+        {
+            cout<<mat[i][0]<<" ";
+            cout<<mat[i][cols-1]<<" ";
+            cout<<endl;
+        }
+        
+        if(rows > 1)
+        {
+            for(int i=0;i<cols;i++)
+            {
+                cout<<mat[rows-1][i]<<" ";
+            }
+            cout<<endl;
+        }
     }
 };
 
@@ -134,6 +163,12 @@ int main()
 
     cout<<"Enter rows and cols of second matrix: ";
     cin>>r2>>c2;
+
+    if(r1<=0 || c1<=0 || r2<=0 || c2<=0)
+    {
+        cout<<"Matrix dimensions must be positive\n";
+        return 1;
+    }
 
     Matrix m1(r1,c1);
     Matrix m2(r2,c2);
@@ -159,7 +194,6 @@ int main()
 
     cout<<"Boundary elements of second matrix:\n";
     m2.boundary();
-    
 
     return 0;
 }
