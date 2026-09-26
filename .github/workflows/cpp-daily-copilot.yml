@@ -1,0 +1,125 @@
+name: Daily C++ Improvement
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  copilot-requests: write
+
+jobs:
+  improve:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install latest Copilot CLI
+        run: |
+          npm install -g @github/copilot
+          copilot --version
+
+      - name: Run Copilot maintenance
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COPILOT_MODEL: auto
+        run: |
+          copilot -p @- --model=auto --allow-tool='read,write,shell' --no-ask-user <<'PROMPT'
+          You are performing genuine daily maintenance on this C++ repository.
+
+          Your job:
+
+          1. Inspect the repository, especially:
+             - Practice Questions/
+             - src/
+             - tests/
+             - include/
+
+          2. Find ONE genuine C++ issue that can be safely improved.
+
+          3. Prefer real issues such as:
+             - incorrect calculations
+             - incorrect conditions
+             - array or matrix boundary errors
+             - invalid input handling
+             - incorrect output
+             - unsafe memory usage
+             - missing error handling
+             - portability problems
+             - simple C++ logic bugs
+
+          4. Do NOT make cosmetic changes.
+
+          5. Do NOT rewrite working code just to create a change.
+
+          6. Preserve the original educational/student coding style.
+
+          7. Avoid introducing unnecessary STL features.
+             Prefer the existing style of the repository.
+
+          8. Read the complete file before modifying it.
+
+          9. Make the smallest meaningful correction.
+
+          10. Compile the changed C++ file with:
+              g++ -std=c++17
+
+          11. If compilation fails because of your change, fix it.
+
+          12. Run the program when practical and verify the correction.
+
+          13. Review git diff after the change.
+
+          14. Do NOT modify:
+              - GitHub Actions workflows
+              - secrets
+              - authentication
+              - deployment configuration
+              - unrelated files
+              - binary files
+
+          15. If no genuine improvement is appropriate, make NO change.
+
+          IMPORTANT:
+          This is real repository maintenance. Do not create artificial,
+          meaningless, or duplicate changes merely to generate a commit.
+
+          If you make a genuine improvement, leave the modified file in the
+          working tree. Do not commit or push it yourself.
+          PROMPT
+
+      - name: Review changes
+        run: |
+          git status --short
+          git diff --check
+          git diff
+
+      - name: Commit genuine improvement
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No genuine improvement was made."
+            exit 0
+          fi
+
+          git config user.name "Aswin Udhaya"
+          git config user.email "243352642+aswinudhayasivam-create@users.noreply.github.com"
+
+          git add -- \
+            "Practice Questions" \
+            src \
+            include \
+            tests
+
+          if git diff --cached --quiet; then
+            echo "No allowed C++ changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Daily C++ maintenance"
+          git push origin HEAD:main
