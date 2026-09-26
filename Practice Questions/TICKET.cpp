@@ -9,21 +9,20 @@ class Ticket
 
 public:
 
-    Ticket ()
+    Ticket() : row(0), seat(0), sold(false)
     {
-        row = 0;
-        seat = 0;
-        sold = false;
     }
 
-    Ticket(int r, int s)
+    Ticket(int r, int s) : row(r), seat(s), sold(false)
     {
-        row = r;
-        seat = s;
-        sold = false;
+        if (row < 1 || seat < 1)
+        {
+            row = 0;
+            seat = 0;
+        }
     }
 
-    bool isSold()
+    bool isSold() const
     {
         return sold;
     }
@@ -40,21 +39,20 @@ public:
             sold = false;
     }
 
-    void display ()
+    void display() const
     {
         cout << "Row: " << row
-            << " Seat: " << seat
-            << " Sold: " << (sold ? "Yes" : "No")
-            << endl;
+             << " Seat: " << seat
+             << " Sold: " << (sold ? "Yes" : "No")
+             << endl;
     }
 
-    friend int countTickets(Ticket[], int);
+    friend int countTickets(const Ticket[], int);
 
     ~Ticket() {}
 };
 
-
-int countTickets(Ticket t[], int size)
+int countTickets(const Ticket t[], int size)
 {
     int count = 0;
 
@@ -74,14 +72,29 @@ int main()
     cout << "Enter the number of tickets: ";
     cin >> n;
 
+    if (n <= 0)
+    {
+        cout << "Ticket count must be positive." << endl;
+        return 1;
+    }
+
     Ticket *t = new Ticket[n];
 
     int r, s;
 
     for(int i = 0; i < n; i++)
     {
-        cout << "Enter row and seat for ticket " << i + 1 << ": ";
-        cin >> r >> s;
+        do
+        {
+            cout << "Enter row and seat for ticket " << i + 1 << ": ";
+            cin >> r >> s;
+
+            if (r <= 0 || s <= 0)
+            {
+                cout << "Row and seat must be positive. Please try again." << endl;
+            }
+        } while (r <= 0 || s <= 0);
+
         t[i] = Ticket(r, s);
     }
 
