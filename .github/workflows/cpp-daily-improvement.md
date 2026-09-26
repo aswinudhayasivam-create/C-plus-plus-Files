@@ -12,6 +12,14 @@ permissions:
 engine:
   id: copilot
   model: copilot/auto
+  command: copilot
+
+pre-agent-steps:
+  - name: Install latest Copilot CLI
+    run: |
+      npm install -g @github/copilot
+      copilot --version
+
 tools:
   bash:
     - "g++ --version"
