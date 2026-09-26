@@ -8,52 +8,69 @@ class Matrix
 
 public:
 
-    Matrix(int r,int c)
+    Matrix(int r, int c)
     {
         rows = r;
         cols = c;
     }
 
+    bool isValid() const
+    {
+        return rows > 0 && cols > 0;
+    }
+
     void inp()
     {
-        cout<<"Enter matrix elements:\n";
-
-        for(int i=0;i<rows;i++)
+        if (!isValid())
         {
-            for(int j=0;j<cols;j++)
+            cout << "Matrix dimensions must be positive.\n";
+            return;
+        }
+
+        cout << "Enter matrix elements:\n";
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
             {
-                cin>>mat[i][j];
+                cin >> mat[i][j];
             }
         }
     }
 
-    void display()
+    void display() const
     {
-        for(int i=0;i<rows;i++)
+        if (!isValid())
         {
-            for(int j=0;j<cols;j++)
+            cout << "Matrix is empty.\n";
+            return;
+        }
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
             {
-                cout<<mat[i][j]<<" ";
+                cout << mat[i][j] << " ";
             }
-            cout<<endl;
+            cout << endl;
         }
     }
 
     Matrix operator+(const Matrix &m)
     {
-        Matrix add(rows,cols);
+        Matrix add(rows, cols);
 
-        if(rows!=m.rows || cols!=m.cols)
+        if (rows != m.rows || cols != m.cols)
         {
-            cout<<"Addition not possible\n";
+            cout << "Addition not possible\n";
             return add;
         }
 
-        for(int i=0;i<rows;i++)
+        for (int i = 0; i < rows; i++)
         {
-            for(int j=0;j<cols;j++)
+            for (int j = 0; j < cols; j++)
             {
-                add.mat[i][j]=mat[i][j]+m.mat[i][j];
+                add.mat[i][j] = mat[i][j] + m.mat[i][j];
             }
         }
 
@@ -62,19 +79,19 @@ public:
 
     Matrix operator-(const Matrix &m)
     {
-        Matrix sub(rows,cols);
+        Matrix sub(rows, cols);
 
-        if(rows!=m.rows || cols!=m.cols)
+        if (rows != m.rows || cols != m.cols)
         {
-            cout<<"Subtraction not possible\n";
+            cout << "Subtraction not possible\n";
             return sub;
         }
 
-        for(int i=0;i<rows;i++)
+        for (int i = 0; i < rows; i++)
         {
-            for(int j=0;j<cols;j++)
+            for (int j = 0; j < cols; j++)
             {
-                sub.mat[i][j]=mat[i][j]-m.mat[i][j];
+                sub.mat[i][j] = mat[i][j] - m.mat[i][j];
             }
         }
 
@@ -83,60 +100,70 @@ public:
 
     Matrix operator*(const Matrix &m)
     {
-        Matrix mul(rows,m.cols);
+        Matrix mul(rows, m.cols);
 
-        if(cols!=m.rows)
+        if (cols != m.rows)
         {
-            cout<<"Multiplication not possible\n";
+            cout << "Multiplication not possible\n";
             return mul;
         }
 
-        for(int i=0;i<rows;i++)
+        for (int i = 0; i < rows; i++)
         {
-            for(int j=0;j<m.cols;j++)
+            for (int j = 0; j < m.cols; j++)
             {
-                mul.mat[i][j]=0;
+                mul.mat[i][j] = 0;
 
-                for(int k=0;k<cols;k++)
+                for (int k = 0; k < cols; k++)
                 {
-                    mul.mat[i][j]+=mat[i][k]*m.mat[k][j];
+                    mul.mat[i][j] += mat[i][k] * m.mat[k][j];
                 }
             }
         }
 
         return mul;
     }
+
     void boundary()
     {
-    for(int i=0;i<cols;i++)
-    {
-        cout<<mat[0][i]<<" ";
-    }
-    cout<<endl;
-    for(int i=1;i<rows-1;i++)
-    {
-        cout<<mat[i][0]<<" ";
-        cout<<mat[i][cols-1]<<" ";
-        cout<<endl;
-    }
-    for(int i=0;i<cols;i++)
-    {
-        cout<<mat[rows-1][i]<<" ";
+        if (!isValid())
+        {
+            cout << "No boundary elements.\n";
+            return;
+        }
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                if (i == 0 || i == rows - 1 || j == 0 || j == cols - 1)
+                {
+                    cout << mat[i][j] << " ";
+                }
+            }
+        }
+        cout << endl;
     }
 };
 
 int main()
 {
-    int r1,c1,r2,c2;
+    int r1, c1, r2, c2;
 
-    cout<<"Enter rows and cols of first matrix: ";
-    cin>>r1>>c1;
+    cout << "Enter rows and cols of first matrix: ";
+    cin >> r1 >> c1;
 
-    cout<<"Enter rows and cols of second matrix: ";
-    cin>>r2>>c2;
+    cout << "Enter rows and cols of second matrix: ";
+    cin >> r2 >> c2;
 
-    Matrix m1(r1,c1);
-    Matrix m2(r2,c2);
+    if (r1 <= 0 || c1 <= 0 || r2 <= 0 || c2 <= 0)
+    {
+        cout << "Matrix dimensions must be positive.\n";
+        return 1;
+    }
+
+    Matrix m1(r1, c1);
+    Matrix m2(r2, c2);
 
     m1.inp();
     m2.inp();
@@ -145,21 +172,20 @@ int main()
     Matrix diff = m1 - m2;
     Matrix prod = m1 * m2;
 
-    cout<<"Sum:\n";
+    cout << "Sum:\n";
     sum.display();
 
-    cout<<"Difference:\n";
+    cout << "Difference:\n";
     diff.display();
 
-    cout<<"Product:\n";
+    cout << "Product:\n";
     prod.display();
 
-    cout<<"Boundary elements of first matrix:\n";
+    cout << "Boundary elements of first matrix:\n";
     m1.boundary();
 
-    cout<<"Boundary elements of second matrix:\n";
+    cout << "Boundary elements of second matrix:\n";
     m2.boundary();
-    
 
     return 0;
 }
