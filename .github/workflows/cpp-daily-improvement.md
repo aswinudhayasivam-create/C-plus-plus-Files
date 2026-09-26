@@ -30,9 +30,7 @@ safe-outputs:
     labels:
       - automated
       - cpp-maintenance
-
 ---
-
 # Daily C++ Repository Maintenance
 
 Inspect the repository and perform genuine maintenance on the C++ learning code.
