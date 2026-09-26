@@ -11,7 +11,7 @@ permissions:
 
 engine:
   id: copilot
-  model: default
+  model: copilot/auto
 tools:
   bash:
     - "g++ --version"
