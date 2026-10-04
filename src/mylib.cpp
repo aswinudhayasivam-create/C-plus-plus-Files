@@ -12,10 +12,13 @@ std::string_view trim_whitespace(std::string_view text) {
     }
     return text;
 }
+
+std::string_view normalize_name(std::string_view name) {
+    const std::string_view trimmed = trim_whitespace(name);
+    return trimmed.empty() ? std::string_view{"World"} : trimmed;
+}
 }  // namespace
 
 std::string make_greeting(std::string_view name) {
-    const std::string_view trimmed = trim_whitespace(name);
-    const std::string_view safe_name = trimmed.empty() ? std::string_view{"World"} : trimmed;
-    return "Hello, " + std::string{safe_name} + "!";
+    return "Hello, " + std::string{normalize_name(name)} + "!";
 }
