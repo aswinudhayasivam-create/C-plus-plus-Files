@@ -14,4 +14,6 @@ int main() {
     assert(make_greeting(" \t \r\n \v\f ") == "Hello, World!");
     assert(make_greeting("  Alice Bob  ") == "Hello, Alice Bob!");
     assert(make_greeting("\tAlice\t") == "Hello, Alice!");
+    assert(make_greeting("  Alice\t\nBob  ") == "Hello, Alice Bob!");
+    assert(make_greeting(" Alice \t Bob ") == "Hello, Alice Bob!");
 }

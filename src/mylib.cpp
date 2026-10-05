@@ -13,12 +13,32 @@ std::string_view trim_whitespace(std::string_view text) {
     return text;
 }
 
-std::string_view normalize_name(std::string_view name) {
+std::string normalize_name(std::string_view name) {
     const std::string_view trimmed = trim_whitespace(name);
-    return trimmed.empty() ? std::string_view{"World"} : trimmed;
+    if (trimmed.empty()) {
+        return "World";
+    }
+
+    std::string normalized;
+    normalized.reserve(trimmed.size());
+    bool last_was_space = false;
+
+    for (const unsigned char ch : trimmed) {
+        if (std::isspace(ch)) {
+            if (!normalized.empty() && !last_was_space) {
+                normalized.push_back(' ');
+                last_was_space = true;
+            }
+        } else {
+            normalized.push_back(static_cast<char>(ch));
+            last_was_space = false;
+        }
+    }
+
+    return normalized;
 }
 }  // namespace
 
 std::string make_greeting(std::string_view name) {
-    return "Hello, " + std::string{normalize_name(name)} + "!";
+    return "Hello, " + normalize_name(name) + "!";
 }
