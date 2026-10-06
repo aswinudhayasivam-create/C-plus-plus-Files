@@ -25,11 +25,13 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x2008:
         case 0x2009:
         case 0x200A:
+        case 0x200B:
         case 0x2028:
         case 0x2029:
         case 0x202F:
         case 0x205F:
         case 0x3000:
+        case 0xFEFF:
             return true;
         default:
             return false;
