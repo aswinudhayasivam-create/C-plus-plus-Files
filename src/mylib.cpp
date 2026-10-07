@@ -1,6 +1,6 @@
 #include "mylib.hpp"
 
-#include <cctype>
+#include <cstddef>
 
 namespace {
 bool is_whitespace_codepoint(unsigned int codepoint) {
@@ -48,13 +48,28 @@ std::size_t utf8_codepoint_length(std::string_view text) {
         return 1;
     }
     if ((first & 0xE0u) == 0xC0u && text.size() >= 2) {
-        return 2;
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        if ((second & 0xC0u) == 0x80u) {
+            return 2;
+        }
+        return 1;
     }
     if ((first & 0xF0u) == 0xE0u && text.size() >= 3) {
-        return 3;
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        const unsigned char third = static_cast<unsigned char>(text[2]);
+        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u) {
+            return 3;
+        }
+        return 1;
     }
     if ((first & 0xF8u) == 0xF0u && text.size() >= 4) {
-        return 4;
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        const unsigned char third = static_cast<unsigned char>(text[2]);
+        const unsigned char fourth = static_cast<unsigned char>(text[3]);
+        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u && (fourth & 0xC0u) == 0x80u) {
+            return 4;
+        }
+        return 1;
     }
     return 1;
 }
@@ -72,14 +87,26 @@ std::size_t utf8_codepoint_length_from_end(std::string_view text) {
     }
 
     const unsigned char lead = static_cast<unsigned char>(text[index]);
-    if ((lead & 0xF0u) == 0xF0u) {
-        return 4;
+    if ((lead & 0xF8u) == 0xF0u) {
+        const std::string_view candidate = text.substr(index, length);
+        if (candidate.size() == 4 && (static_cast<unsigned char>(candidate[1]) & 0xC0u) == 0x80u &&
+            (static_cast<unsigned char>(candidate[2]) & 0xC0u) == 0x80u &&
+            (static_cast<unsigned char>(candidate[3]) & 0xC0u) == 0x80u) {
+            return 4;
+        }
     }
-    if ((lead & 0xE0u) == 0xE0u) {
-        return 3;
+    if ((lead & 0xF0u) == 0xE0u) {
+        const std::string_view candidate = text.substr(index, length);
+        if (candidate.size() == 3 && (static_cast<unsigned char>(candidate[1]) & 0xC0u) == 0x80u &&
+            (static_cast<unsigned char>(candidate[2]) & 0xC0u) == 0x80u) {
+            return 3;
+        }
     }
-    if ((lead & 0xC0u) == 0xC0u) {
-        return 2;
+    if ((lead & 0xE0u) == 0xC0u) {
+        const std::string_view candidate = text.substr(index, length);
+        if (candidate.size() == 2 && (static_cast<unsigned char>(candidate[1]) & 0xC0u) == 0x80u) {
+            return 2;
+        }
     }
     return 1;
 }
@@ -87,7 +114,11 @@ std::size_t utf8_codepoint_length_from_end(std::string_view text) {
 std::string_view trim_whitespace(std::string_view text) {
     while (!text.empty()) {
         const std::size_t length = utf8_codepoint_length(text);
-        const std::string_view current = text.substr(0, length);
+        if (length == 0) {
+            break;
+        }
+
+        std::string_view current = text.substr(0, length);
         unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
 
         if (current.size() == 2) {
@@ -111,7 +142,11 @@ std::string_view trim_whitespace(std::string_view text) {
 
     while (!text.empty()) {
         const std::size_t length = utf8_codepoint_length_from_end(text);
-        const std::string_view current = text.substr(text.size() - length, length);
+        if (length == 0) {
+            break;
+        }
+
+        std::string_view current = text.substr(text.size() - length, length);
         unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
 
         if (current.size() == 2) {
@@ -149,6 +184,10 @@ std::string normalize_name(std::string_view name) {
 
     while (index < trimmed.size()) {
         const std::size_t codepoint_length = utf8_codepoint_length(trimmed.substr(index));
+        if (codepoint_length == 0) {
+            break;
+        }
+
         std::string_view current = trimmed.substr(index, codepoint_length);
         unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
 
