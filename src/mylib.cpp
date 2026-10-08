@@ -14,6 +14,7 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x85:
         case 0xA0:
         case 0x1680:
+        case 0x180E:
         case 0x2000:
         case 0x2001:
         case 0x2002:
@@ -36,6 +37,48 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         default:
             return false;
     }
+}
+
+unsigned int decode_utf8_codepoint(std::string_view text) {
+    if (text.empty()) {
+        return 0;
+    }
+
+    const unsigned char first = static_cast<unsigned char>(text.front());
+    if ((first & 0x80u) == 0u) {
+        return static_cast<unsigned int>(first);
+    }
+    if ((first & 0xE0u) == 0xC0u && text.size() >= 2) {
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        if ((second & 0xC0u) == 0x80u) {
+            return ((static_cast<unsigned int>(first) & 0x1Fu) << 6) |
+                   (static_cast<unsigned int>(second) & 0x3Fu);
+        }
+        return static_cast<unsigned int>(first);
+    }
+    if ((first & 0xF0u) == 0xE0u && text.size() >= 3) {
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        const unsigned char third = static_cast<unsigned char>(text[2]);
+        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u) {
+            return ((static_cast<unsigned int>(first) & 0x0Fu) << 12) |
+                   ((static_cast<unsigned int>(second) & 0x3Fu) << 6) |
+                   (static_cast<unsigned int>(third) & 0x3Fu);
+        }
+        return static_cast<unsigned int>(first);
+    }
+    if ((first & 0xF8u) == 0xF0u && text.size() >= 4) {
+        const unsigned char second = static_cast<unsigned char>(text[1]);
+        const unsigned char third = static_cast<unsigned char>(text[2]);
+        const unsigned char fourth = static_cast<unsigned char>(text[3]);
+        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u && (fourth & 0xC0u) == 0x80u) {
+            return ((static_cast<unsigned int>(first) & 0x07u) << 18) |
+                   ((static_cast<unsigned int>(second) & 0x3Fu) << 12) |
+                   ((static_cast<unsigned int>(third) & 0x3Fu) << 6) |
+                   (static_cast<unsigned int>(fourth) & 0x3Fu);
+        }
+        return static_cast<unsigned int>(first);
+    }
+    return static_cast<unsigned int>(first);
 }
 
 std::size_t utf8_codepoint_length(std::string_view text) {
@@ -119,20 +162,7 @@ std::string_view trim_whitespace(std::string_view text) {
         }
 
         std::string_view current = text.substr(0, length);
-        unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
-
-        if (current.size() == 2) {
-            codepoint = ((codepoint & 0x1Fu) << 6) | (static_cast<unsigned int>(static_cast<unsigned char>(current.back())) & 0x3Fu);
-        } else if (current.size() == 3) {
-            codepoint = ((codepoint & 0x0Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu);
-        } else if (current.size() == 4) {
-            codepoint = ((codepoint & 0x07u) << 18) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[3])) & 0x3Fu);
-        }
+        const unsigned int codepoint = decode_utf8_codepoint(current);
 
         if (!is_whitespace_codepoint(codepoint)) {
             break;
@@ -147,20 +177,7 @@ std::string_view trim_whitespace(std::string_view text) {
         }
 
         std::string_view current = text.substr(text.size() - length, length);
-        unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
-
-        if (current.size() == 2) {
-            codepoint = ((codepoint & 0x1Fu) << 6) | (static_cast<unsigned int>(static_cast<unsigned char>(current.back())) & 0x3Fu);
-        } else if (current.size() == 3) {
-            codepoint = ((codepoint & 0x0Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu);
-        } else if (current.size() == 4) {
-            codepoint = ((codepoint & 0x07u) << 18) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[3])) & 0x3Fu);
-        }
+        const unsigned int codepoint = decode_utf8_codepoint(current);
 
         if (!is_whitespace_codepoint(codepoint)) {
             break;
@@ -189,20 +206,7 @@ std::string normalize_name(std::string_view name) {
         }
 
         std::string_view current = trimmed.substr(index, codepoint_length);
-        unsigned int codepoint = static_cast<unsigned int>(static_cast<unsigned char>(current.front()));
-
-        if (current.size() == 2) {
-            codepoint = ((codepoint & 0x1Fu) << 6) | (static_cast<unsigned int>(static_cast<unsigned char>(current.back())) & 0x3Fu);
-        } else if (current.size() == 3) {
-            codepoint = ((codepoint & 0x0Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu);
-        } else if (current.size() == 4) {
-            codepoint = ((codepoint & 0x07u) << 18) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[1])) & 0x3Fu) << 12) |
-                        ((static_cast<unsigned int>(static_cast<unsigned char>(current[2])) & 0x3Fu) << 6) |
-                        (static_cast<unsigned int>(static_cast<unsigned char>(current[3])) & 0x3Fu);
-        }
+        const unsigned int codepoint = decode_utf8_codepoint(current);
 
         if (is_whitespace_codepoint(codepoint)) {
             if (!normalized.empty() && !last_was_space) {
