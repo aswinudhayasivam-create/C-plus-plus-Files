@@ -24,6 +24,16 @@ int main() {
 
     const std::string bom_prefix("\xEF\xBB\xBF", 3);
     const std::string zero_width_space("\xE2\x80\x8B", 3);
+    const std::string zero_width_non_joiner("\xE2\x80\x8C", 3);
+    const std::string zero_width_joiner("\xE2\x80\x8D", 3);
+    const std::string word_joiner("\xE2\x81\xA0", 3);
     assert(make_greeting(bom_prefix + "Alice" + bom_prefix) == "Hello, Alice!");
     assert(make_greeting(zero_width_space + "Alice" + zero_width_space + "Bob" + zero_width_space) == "Hello, Alice Bob!");
+    assert(make_greeting(zero_width_non_joiner + "Alice" + zero_width_non_joiner + "Bob" + zero_width_non_joiner) == "Hello, Alice Bob!");
+    assert(make_greeting(zero_width_joiner + "Alice" + zero_width_joiner + "Bob" + zero_width_joiner) == "Hello, Alice Bob!");
+    assert(make_greeting(word_joiner + "Alice" + word_joiner + "Bob" + word_joiner) == "Hello, Alice Bob!");
+
+    const std::string control_whitespace = std::string() + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F) +
+        'A' + 'l' + 'i' + 'c' + 'e' + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F);
+    assert(make_greeting(control_whitespace) == "Hello, Alice!");
 }

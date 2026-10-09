@@ -10,6 +10,10 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x0B:
         case 0x0C:
         case 0x0D:
+        case 0x1C:
+        case 0x1D:
+        case 0x1E:
+        case 0x1F:
         case 0x20:
         case 0x85:
         case 0xA0:
@@ -27,10 +31,13 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x2009:
         case 0x200A:
         case 0x200B:
+        case 0x200C:
+        case 0x200D:
         case 0x2028:
         case 0x2029:
         case 0x202F:
         case 0x205F:
+        case 0x2060:
         case 0x3000:
         case 0xFEFF:
             return true;
