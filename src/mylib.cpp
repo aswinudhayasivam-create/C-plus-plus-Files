@@ -5,6 +5,30 @@
 namespace {
 bool is_whitespace_codepoint(unsigned int codepoint) {
     switch (codepoint) {
+        case 0x00AD:
+        case 0x061C:
+        case 0x115F:
+        case 0x1160:
+        case 0x17B4:
+        case 0x17B5:
+        case 0x180E:
+        case 0x200B:
+        case 0x200C:
+        case 0x200D:
+        case 0x200E:
+        case 0x200F:
+        case 0x202A:
+        case 0x202B:
+        case 0x202C:
+        case 0x202D:
+        case 0x202E:
+        case 0x2028:
+        case 0x2029:
+        case 0x2060:
+        case 0x2066:
+        case 0x2067:
+        case 0x2068:
+        case 0x2069:
         case 0x09:
         case 0x0A:
         case 0x0B:
@@ -18,7 +42,6 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x85:
         case 0xA0:
         case 0x1680:
-        case 0x180E:
         case 0x2000:
         case 0x2001:
         case 0x2002:
@@ -30,14 +53,8 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x2008:
         case 0x2009:
         case 0x200A:
-        case 0x200B:
-        case 0x200C:
-        case 0x200D:
-        case 0x2028:
-        case 0x2029:
         case 0x202F:
         case 0x205F:
-        case 0x2060:
         case 0x3000:
         case 0xFEFF:
             return true;
