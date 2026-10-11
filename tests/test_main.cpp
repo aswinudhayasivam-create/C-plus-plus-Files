@@ -27,6 +27,8 @@ int main() {
     const std::string zero_width_non_joiner("\xE2\x80\x8C", 3);
     const std::string zero_width_joiner("\xE2\x80\x8D", 3);
     const std::string word_joiner("\xE2\x81\xA0", 3);
+    const std::string invisible_times("\xE2\x81\xA2", 3);
+    const std::string invisible_plus("\xE2\x81\xA5", 3);
     const std::string left_to_right_mark("\xE2\x80\x8E", 3);
     const std::string right_to_left_mark("\xE2\x80\x8F", 3);
     const std::string text_isolate("\xE2\x81\xA6", 3);
@@ -35,6 +37,8 @@ int main() {
     assert(make_greeting(zero_width_non_joiner + "Alice" + zero_width_non_joiner + "Bob" + zero_width_non_joiner) == "Hello, Alice Bob!");
     assert(make_greeting(zero_width_joiner + "Alice" + zero_width_joiner + "Bob" + zero_width_joiner) == "Hello, Alice Bob!");
     assert(make_greeting(word_joiner + "Alice" + word_joiner + "Bob" + word_joiner) == "Hello, Alice Bob!");
+    assert(make_greeting(invisible_times + "Alice" + invisible_times + "Bob" + invisible_times) == "Hello, Alice Bob!");
+    assert(make_greeting(invisible_plus + "Alice" + invisible_plus + "Bob" + invisible_plus) == "Hello, Alice Bob!");
     assert(make_greeting(left_to_right_mark + "Alice" + left_to_right_mark + "Bob" + left_to_right_mark) == "Hello, Alice Bob!");
     assert(make_greeting(right_to_left_mark + "Alice" + right_to_left_mark + "Bob" + right_to_left_mark) == "Hello, Alice Bob!");
     assert(make_greeting(text_isolate + "Alice" + text_isolate + "Bob" + text_isolate) == "Hello, Alice Bob!");

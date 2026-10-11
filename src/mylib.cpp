@@ -25,10 +25,21 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x2028:
         case 0x2029:
         case 0x2060:
+        case 0x2061:
+        case 0x2062:
+        case 0x2063:
+        case 0x2064:
+        case 0x2065:
         case 0x2066:
         case 0x2067:
         case 0x2068:
         case 0x2069:
+        case 0x206A:
+        case 0x206B:
+        case 0x206C:
+        case 0x206D:
+        case 0x206E:
+        case 0x206F:
         case 0x09:
         case 0x0A:
         case 0x0B:
@@ -72,6 +83,7 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
     if ((first & 0x80u) == 0u) {
         return static_cast<unsigned int>(first);
     }
+
     if ((first & 0xE0u) == 0xC0u && text.size() >= 2) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         if ((second & 0xC0u) == 0x80u) {
@@ -80,6 +92,7 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
         }
         return static_cast<unsigned int>(first);
     }
+
     if ((first & 0xF0u) == 0xE0u && text.size() >= 3) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
@@ -90,6 +103,7 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
         }
         return static_cast<unsigned int>(first);
     }
+
     if ((first & 0xF8u) == 0xF0u && text.size() >= 4) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
@@ -102,6 +116,7 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
         }
         return static_cast<unsigned int>(first);
     }
+
     return static_cast<unsigned int>(first);
 }
 
