@@ -3,6 +3,10 @@
 #include <cstddef>
 
 namespace {
+bool is_utf8_continuation(unsigned char byte) {
+    return (byte & 0xC0u) == 0x80u;
+}
+
 bool is_whitespace_codepoint(unsigned int codepoint) {
     switch (codepoint) {
         case 0x00AD:
@@ -86,9 +90,12 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
 
     if ((first & 0xE0u) == 0xC0u && text.size() >= 2) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
-        if ((second & 0xC0u) == 0x80u) {
-            return ((static_cast<unsigned int>(first) & 0x1Fu) << 6) |
-                   (static_cast<unsigned int>(second) & 0x3Fu);
+        if (is_utf8_continuation(second)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x1Fu) << 6) |
+                                           (static_cast<unsigned int>(second) & 0x3Fu);
+            if (codepoint >= 0x80u) {
+                return codepoint;
+            }
         }
         return static_cast<unsigned int>(first);
     }
@@ -96,10 +103,13 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
     if ((first & 0xF0u) == 0xE0u && text.size() >= 3) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
-        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u) {
-            return ((static_cast<unsigned int>(first) & 0x0Fu) << 12) |
-                   ((static_cast<unsigned int>(second) & 0x3Fu) << 6) |
-                   (static_cast<unsigned int>(third) & 0x3Fu);
+        if (is_utf8_continuation(second) && is_utf8_continuation(third)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x0Fu) << 12) |
+                                          ((static_cast<unsigned int>(second) & 0x3Fu) << 6) |
+                                          (static_cast<unsigned int>(third) & 0x3Fu);
+            if (codepoint >= 0x800u && !(codepoint >= 0xD800u && codepoint <= 0xDFFFu)) {
+                return codepoint;
+            }
         }
         return static_cast<unsigned int>(first);
     }
@@ -108,11 +118,14 @@ unsigned int decode_utf8_codepoint(std::string_view text) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
         const unsigned char fourth = static_cast<unsigned char>(text[3]);
-        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u && (fourth & 0xC0u) == 0x80u) {
-            return ((static_cast<unsigned int>(first) & 0x07u) << 18) |
-                   ((static_cast<unsigned int>(second) & 0x3Fu) << 12) |
-                   ((static_cast<unsigned int>(third) & 0x3Fu) << 6) |
-                   (static_cast<unsigned int>(fourth) & 0x3Fu);
+        if (is_utf8_continuation(second) && is_utf8_continuation(third) && is_utf8_continuation(fourth)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x07u) << 18) |
+                                          ((static_cast<unsigned int>(second) & 0x3Fu) << 12) |
+                                          ((static_cast<unsigned int>(third) & 0x3Fu) << 6) |
+                                          (static_cast<unsigned int>(fourth) & 0x3Fu);
+            if (codepoint >= 0x10000u && codepoint <= 0x10FFFFu) {
+                return codepoint;
+            }
         }
         return static_cast<unsigned int>(first);
     }
@@ -131,16 +144,25 @@ std::size_t utf8_codepoint_length(std::string_view text) {
     }
     if ((first & 0xE0u) == 0xC0u && text.size() >= 2) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
-        if ((second & 0xC0u) == 0x80u) {
-            return 2;
+        if (is_utf8_continuation(second)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x1Fu) << 6) |
+                                           (static_cast<unsigned int>(second) & 0x3Fu);
+            if (codepoint >= 0x80u) {
+                return 2;
+            }
         }
         return 1;
     }
     if ((first & 0xF0u) == 0xE0u && text.size() >= 3) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
-        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u) {
-            return 3;
+        if (is_utf8_continuation(second) && is_utf8_continuation(third)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x0Fu) << 12) |
+                                          ((static_cast<unsigned int>(second) & 0x3Fu) << 6) |
+                                          (static_cast<unsigned int>(third) & 0x3Fu);
+            if (codepoint >= 0x800u && !(codepoint >= 0xD800u && codepoint <= 0xDFFFu)) {
+                return 3;
+            }
         }
         return 1;
     }
@@ -148,8 +170,14 @@ std::size_t utf8_codepoint_length(std::string_view text) {
         const unsigned char second = static_cast<unsigned char>(text[1]);
         const unsigned char third = static_cast<unsigned char>(text[2]);
         const unsigned char fourth = static_cast<unsigned char>(text[3]);
-        if ((second & 0xC0u) == 0x80u && (third & 0xC0u) == 0x80u && (fourth & 0xC0u) == 0x80u) {
-            return 4;
+        if (is_utf8_continuation(second) && is_utf8_continuation(third) && is_utf8_continuation(fourth)) {
+            const unsigned int codepoint = ((static_cast<unsigned int>(first) & 0x07u) << 18) |
+                                          ((static_cast<unsigned int>(second) & 0x3Fu) << 12) |
+                                          ((static_cast<unsigned int>(third) & 0x3Fu) << 6) |
+                                          (static_cast<unsigned int>(fourth) & 0x3Fu);
+            if (codepoint >= 0x10000u && codepoint <= 0x10FFFFu) {
+                return 4;
+            }
         }
         return 1;
     }
