@@ -32,6 +32,7 @@ int main() {
     const std::string left_to_right_mark("\xE2\x80\x8E", 3);
     const std::string right_to_left_mark("\xE2\x80\x8F", 3);
     const std::string text_isolate("\xE2\x81\xA6", 3);
+    const std::string mongolian_vowel_separator("\xE1\xA0\x8E", 3);
     assert(make_greeting(bom_prefix + "Alice" + bom_prefix) == "Hello, Alice!");
     assert(make_greeting(zero_width_space + "Alice" + zero_width_space + "Bob" + zero_width_space) == "Hello, Alice Bob!");
     assert(make_greeting(zero_width_non_joiner + "Alice" + zero_width_non_joiner + "Bob" + zero_width_non_joiner) == "Hello, Alice Bob!");
@@ -42,6 +43,7 @@ int main() {
     assert(make_greeting(left_to_right_mark + "Alice" + left_to_right_mark + "Bob" + left_to_right_mark) == "Hello, Alice Bob!");
     assert(make_greeting(right_to_left_mark + "Alice" + right_to_left_mark + "Bob" + right_to_left_mark) == "Hello, Alice Bob!");
     assert(make_greeting(text_isolate + "Alice" + text_isolate + "Bob" + text_isolate) == "Hello, Alice Bob!");
+    assert(make_greeting(mongolian_vowel_separator + "Alice" + mongolian_vowel_separator + "Bob" + mongolian_vowel_separator) == "Hello, Alice Bob!");
 
     const std::string control_whitespace = std::string() + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F) +
         'A' + 'l' + 'i' + 'c' + 'e' + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F);

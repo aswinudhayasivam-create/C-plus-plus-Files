@@ -264,8 +264,8 @@ std::string normalize_name(std::string_view name) {
     std::string normalized;
     normalized.reserve(trimmed.size());
     bool last_was_space = false;
-    std::size_t index = 0;
 
+    std::size_t index = 0;
     while (index < trimmed.size()) {
         const std::size_t codepoint_length = utf8_codepoint_length(trimmed.substr(index));
         if (codepoint_length == 0) {
@@ -280,15 +280,16 @@ std::string normalize_name(std::string_view name) {
                 normalized.push_back(' ');
                 last_was_space = true;
             }
-        } else {
-            normalized.append(current.begin(), current.end());
-            last_was_space = false;
+            index += codepoint_length;
+            continue;
         }
 
+        normalized.append(current.begin(), current.end());
+        last_was_space = false;
         index += codepoint_length;
     }
 
-    return normalized;
+    return normalized.empty() ? "World" : normalized;
 }
 }  // namespace
 
