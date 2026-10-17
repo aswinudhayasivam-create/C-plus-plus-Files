@@ -21,6 +21,10 @@ int main() {
     assert(make_greeting(" Alice \t Bob ") == "Hello, Alice Bob!");
     assert(make_greeting("Alice" + no_break_space + "Bob") == "Hello, Alice Bob!");
     assert(make_greeting(em_space + "Alice" + em_space + "Bob" + em_space) == "Hello, Alice Bob!");
+    const std::string figure_space("\xE2\x80\x87", 3);
+    const std::string narrow_no_break_space("\xE2\x80\xAF", 3);
+    assert(make_greeting(figure_space + "Alice" + figure_space + "Bob" + figure_space) == "Hello, Alice Bob!");
+    assert(make_greeting(narrow_no_break_space + "Alice" + narrow_no_break_space + "Bob" + narrow_no_break_space) == "Hello, Alice Bob!");
 
     const std::string bom_prefix("\xEF\xBB\xBF", 3);
     const std::string zero_width_space("\xE2\x80\x8B", 3);

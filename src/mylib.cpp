@@ -8,74 +8,47 @@ bool is_utf8_continuation(unsigned char byte) {
 }
 
 bool is_whitespace_codepoint(unsigned int codepoint) {
+    if (codepoint <= 0x20u) {
+        return true;
+    }
+
     switch (codepoint) {
-        case 0x00AD:
-        case 0x061C:
-        case 0x115F:
-        case 0x1160:
-        case 0x17B4:
-        case 0x17B5:
-        case 0x180E:
-        case 0x200B:
-        case 0x200C:
-        case 0x200D:
-        case 0x200E:
-        case 0x200F:
-        case 0x202A:
-        case 0x202B:
-        case 0x202C:
-        case 0x202D:
-        case 0x202E:
-        case 0x2028:
-        case 0x2029:
-        case 0x2060:
-        case 0x2061:
-        case 0x2062:
-        case 0x2063:
-        case 0x2064:
-        case 0x2065:
-        case 0x2066:
-        case 0x2067:
-        case 0x2068:
-        case 0x2069:
-        case 0x206A:
-        case 0x206B:
-        case 0x206C:
-        case 0x206D:
-        case 0x206E:
-        case 0x206F:
-        case 0x09:
-        case 0x0A:
-        case 0x0B:
-        case 0x0C:
-        case 0x0D:
-        case 0x1C:
-        case 0x1D:
-        case 0x1E:
-        case 0x1F:
-        case 0x20:
-        case 0x85:
-        case 0xA0:
-        case 0x1680:
-        case 0x2000:
-        case 0x2001:
-        case 0x2002:
-        case 0x2003:
-        case 0x2004:
-        case 0x2005:
-        case 0x2006:
-        case 0x2007:
-        case 0x2008:
-        case 0x2009:
-        case 0x200A:
-        case 0x202F:
-        case 0x205F:
-        case 0x3000:
-        case 0xFEFF:
+        case 0x7Fu:
+        case 0x85u:
+        case 0xA0u:
+        case 0x00ADu:
+        case 0x061Cu:
+        case 0x115Fu:
+        case 0x1160u:
+        case 0x17B4u:
+        case 0x17B5u:
+        case 0x180Eu:
+        case 0x1680u:
+        case 0x2028u:
+        case 0x2029u:
+        case 0x202Fu:
+        case 0x205Fu:
+        case 0x3000u:
+        case 0xFEFFu:
             return true;
         default:
-            return false;
+            break;
     }
+
+    if (codepoint >= 0x2000u && codepoint <= 0x200Au) {
+        return true;
+    }
+    if (codepoint >= 0x200Bu && codepoint <= 0x200Fu) {
+        return true;
+    }
+    if (codepoint >= 0x202Au && codepoint <= 0x202Eu) {
+        return true;
+    }
+    if (codepoint >= 0x2060u && codepoint <= 0x206Fu) {
+        return true;
+    }
+
+    return false;
 }
 
 unsigned int decode_utf8_codepoint(std::string_view text) {
