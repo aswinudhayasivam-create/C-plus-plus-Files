@@ -11,7 +11,7 @@ permissions:
 
 engine:
   id: copilot
-  model: copilot/auto
+  model: gpt-5-mini
   command: copilot
 
 pre-agent-steps:
