@@ -42,5 +42,9 @@ int main(){
     Son s(30);
     Daughter d(25);
 
-    se
+    fptr = &s;
+    fptr->iam();
+    fptr = &d;
+    fptr->iam();
+    return 0;
 }

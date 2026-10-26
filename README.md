@@ -62,3 +62,12 @@ of the portable CMake build.
 New compiler, CMake, IDE, and macOS debug-symbol outputs are ignored by
 `.gitignore`. Existing historical output folders are retained because several
 also contain project data and source snapshots.
+
+## Automated maintenance validation
+
+The daily `cpp-daily-copilot.yml` workflow validates proposed changes before
+committing: changed standalone exercises must compile, the root CMake build
+and tests must pass, and edits must stay in the allowed C++ code folders.
+Deletion, renames, and unrelated file changes stop automatic publication.
+Existing historical notes/projects are not claimed to pass this check.
+Compilation does not replace behavior tests for each exercise.
