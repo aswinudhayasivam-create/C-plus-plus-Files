@@ -49,6 +49,11 @@ int main() {
     assert(make_greeting(text_isolate + "Alice" + text_isolate + "Bob" + text_isolate) == "Hello, Alice Bob!");
     assert(make_greeting(mongolian_vowel_separator + "Alice" + mongolian_vowel_separator + "Bob" + mongolian_vowel_separator) == "Hello, Alice Bob!");
 
+    const std::string broken_utf8_prefix = std::string("\xE2\x80");
+    const std::string broken_utf8_suffix = std::string("\xE2\x80");
+    assert(make_greeting(broken_utf8_prefix + "Alice" + broken_utf8_suffix) == "Hello, Alice!");
+    assert(make_greeting(broken_utf8_prefix + "Alice" + " " + "Bob" + broken_utf8_suffix) == "Hello, Alice Bob!");
+
     const std::string control_whitespace = std::string() + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F) +
         'A' + 'l' + 'i' + 'c' + 'e' + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F);
     assert(make_greeting(control_whitespace) == "Hello, Alice!");

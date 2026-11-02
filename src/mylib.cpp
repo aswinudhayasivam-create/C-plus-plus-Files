@@ -157,7 +157,8 @@ std::string_view trim_whitespace(std::string_view text) {
         unsigned int codepoint = 0;
         std::size_t length = 0;
         if (!decode_utf8_codepoint(text, start, codepoint, length)) {
-            break;
+            ++start;
+            continue;
         }
         if (!is_whitespace_codepoint(codepoint)) {
             break;
@@ -178,10 +179,12 @@ std::string_view trim_whitespace(std::string_view text) {
         unsigned int codepoint = 0;
         std::size_t length = 0;
         if (!decode_utf8_codepoint(text, codepoint_start, codepoint, length)) {
-            break;
+            end = codepoint_start;
+            continue;
         }
         if (codepoint_start + length > end) {
-            break;
+            end = codepoint_start;
+            continue;
         }
         if (!is_whitespace_codepoint(codepoint)) {
             break;
