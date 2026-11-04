@@ -54,6 +54,35 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
     return false;
 }
 
+std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offset) {
+    if (offset >= text.size()) {
+        return 0;
+    }
+
+    const unsigned char first = static_cast<unsigned char>(text[offset]);
+    if ((first & 0x80u) == 0u) {
+        return 1;
+    }
+
+    std::size_t expected_length = 1;
+    if ((first & 0xE0u) == 0xC0u) {
+        expected_length = 2;
+    } else if ((first & 0xF0u) == 0xE0u) {
+        expected_length = 3;
+    } else if ((first & 0xF8u) == 0xF0u) {
+        expected_length = 4;
+    } else {
+        return 1;
+    }
+
+    std::size_t consumed = 1;
+    while (consumed < expected_length && offset + consumed < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[offset + consumed]))) {
+        ++consumed;
+    }
+
+    return consumed;
+}
+
 bool decode_utf8_codepoint(std::string_view text, std::size_t offset, unsigned int& codepoint, std::size_t& length) {
     if (offset >= text.size()) {
         return false;
@@ -157,7 +186,7 @@ std::string_view trim_whitespace(std::string_view text) {
         unsigned int codepoint = 0;
         std::size_t length = 0;
         if (!decode_utf8_codepoint(text, start, codepoint, length)) {
-            ++start;
+            start += invalid_utf8_sequence_length(text, start);
             continue;
         }
         if (!is_whitespace_codepoint(codepoint)) {
@@ -208,8 +237,9 @@ std::string normalize_name(std::string_view name) {
         unsigned int codepoint = 0;
         std::size_t length = 0;
         if (!decode_utf8_codepoint(trimmed, index, codepoint, length)) {
+            const std::size_t invalid_length = invalid_utf8_sequence_length(trimmed, index);
             append_utf8(normalized, kUnicodeReplacementCharacter);
-            ++index;
+            index += invalid_length == 0 ? 1 : invalid_length;
             last_was_space = false;
             continue;
         }
