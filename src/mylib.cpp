@@ -71,6 +71,10 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
         expected_length = 3;
     } else if ((first & 0xF8u) == 0xF0u) {
         expected_length = 4;
+    } else if ((first & 0xFCu) == 0xF8u) {
+        expected_length = 5;
+    } else if ((first & 0xFEu) == 0xFCu) {
+        expected_length = 6;
     } else {
         return 1;
     }

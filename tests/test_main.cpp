@@ -51,9 +51,13 @@ int main() {
 
     const std::string broken_utf8_prefix = std::string("\xE2\x80");
     const std::string broken_utf8_suffix = std::string("\xE2\x80");
+    const std::string invalid_utf8_5_byte = std::string("\xF8\x80\x80\x80\x80");
+    const std::string invalid_utf8_6_byte = std::string("\xFC\x80\x80\x80\x80\x80");
     assert(make_greeting(broken_utf8_prefix + "Alice" + broken_utf8_suffix) == "Hello, Alice!");
     assert(make_greeting(broken_utf8_prefix + "Alice" + " " + "Bob" + broken_utf8_suffix) == "Hello, Alice Bob!");
     assert(make_greeting(std::string("A") + broken_utf8_prefix + "B") == "Hello, A�B!");
+    assert(make_greeting(std::string("A") + invalid_utf8_5_byte + "B") == "Hello, A�B!");
+    assert(make_greeting(std::string("A") + invalid_utf8_6_byte + "B") == "Hello, A�B!");
 
     const std::string control_whitespace = std::string() + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F) +
         'A' + 'l' + 'i' + 'c' + 'e' + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F);
