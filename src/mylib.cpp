@@ -20,11 +20,15 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x85u:
         case 0xA0u:
         case 0x00ADu:
+        case 0x034Fu:
         case 0x061Cu:
         case 0x115Fu:
         case 0x1160u:
         case 0x17B4u:
         case 0x17B5u:
+        case 0x180Bu:
+        case 0x180Cu:
+        case 0x180Du:
         case 0x180Eu:
         case 0x1680u:
         case 0x2028u:
@@ -38,6 +42,9 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
             break;
     }
 
+    if (codepoint >= 0x180Bu && codepoint <= 0x180Du) {
+        return true;
+    }
     if (codepoint >= 0x2000u && codepoint <= 0x200Au) {
         return true;
     }

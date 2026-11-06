@@ -37,6 +37,10 @@ int main() {
     const std::string right_to_left_mark("\xE2\x80\x8F", 3);
     const std::string text_isolate("\xE2\x81\xA6", 3);
     const std::string mongolian_vowel_separator("\xE1\xA0\x8E", 3);
+    const std::string combining_grapheme_joiner("\xCD\x8F", 2);
+    const std::string mongolian_free_variation_selector_1("\xE1\xA0\x8B", 3);
+    const std::string mongolian_free_variation_selector_2("\xE1\xA0\x8C", 3);
+    const std::string mongolian_free_variation_selector_3("\xE1\xA0\x8D", 3);
     assert(make_greeting(bom_prefix + "Alice" + bom_prefix) == "Hello, Alice!");
     assert(make_greeting(zero_width_space + "Alice" + zero_width_space + "Bob" + zero_width_space) == "Hello, Alice Bob!");
     assert(make_greeting(zero_width_non_joiner + "Alice" + zero_width_non_joiner + "Bob" + zero_width_non_joiner) == "Hello, Alice Bob!");
@@ -48,6 +52,8 @@ int main() {
     assert(make_greeting(right_to_left_mark + "Alice" + right_to_left_mark + "Bob" + right_to_left_mark) == "Hello, Alice Bob!");
     assert(make_greeting(text_isolate + "Alice" + text_isolate + "Bob" + text_isolate) == "Hello, Alice Bob!");
     assert(make_greeting(mongolian_vowel_separator + "Alice" + mongolian_vowel_separator + "Bob" + mongolian_vowel_separator) == "Hello, Alice Bob!");
+    assert(make_greeting(combining_grapheme_joiner + "Alice" + combining_grapheme_joiner) == "Hello, Alice!");
+    assert(make_greeting(mongolian_free_variation_selector_1 + "Alice" + mongolian_free_variation_selector_2 + " Bob " + mongolian_free_variation_selector_3) == "Hello, Alice Bob!");
 
     const std::string broken_utf8_prefix = std::string("\xE2\x80");
     const std::string broken_utf8_suffix = std::string("\xE2\x80");
