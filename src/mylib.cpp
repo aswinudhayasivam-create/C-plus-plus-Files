@@ -87,7 +87,7 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
     }
 
     std::size_t consumed = 1;
-    while (consumed < expected_length && offset + consumed < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[offset + consumed]))) {
+    while (offset + consumed < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[offset + consumed]))) {
         ++consumed;
     }
 
