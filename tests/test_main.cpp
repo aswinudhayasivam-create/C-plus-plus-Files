@@ -66,6 +66,7 @@ int main() {
     assert(make_greeting(std::string("A") + invalid_utf8_6_byte + "B") == "Hello, A�B!");
     assert(make_greeting(std::string("A") + std::string("\xF8\x80\x80\x80\x80\x80", 6) + "B") == "Hello, A�B!");
     assert(make_greeting(std::string("A") + std::string("\xFC\x80\x80\x80\x80\x80\x80", 7) + "B") == "Hello, A�B!");
+    assert(make_greeting(std::string("\xF8\x80\x80\x80\x80\x80", 6) + "Alice" + std::string("\xF8\x80\x80\x80\x80\x80", 6)) == "Hello, Alice!");
 
     const std::string control_whitespace = std::string() + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F) +
         'A' + 'l' + 'i' + 'c' + 'e' + char(0x1C) + char(0x1D) + char(0x1E) + char(0x1F);

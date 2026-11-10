@@ -10,6 +10,8 @@ bool is_utf8_continuation(unsigned char byte) {
     return (byte & 0xC0u) == 0x80u;
 }
 
+bool decode_utf8_codepoint(std::string_view text, std::size_t offset, unsigned int& codepoint, std::size_t& length);
+
 bool is_whitespace_codepoint(unsigned int codepoint) {
     if (codepoint <= 0x20u) {
         return true;
@@ -71,7 +73,7 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
         return 1;
     }
 
-    std::size_t expected_length = 1;
+    std::size_t expected_length = 0;
     if ((first & 0xE0u) == 0xC0u) {
         expected_length = 2;
     } else if ((first & 0xF0u) == 0xE0u) {
@@ -91,7 +93,19 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
         ++consumed;
     }
 
-    return consumed;
+    if (consumed >= expected_length) {
+        unsigned int codepoint = 0;
+        std::size_t utf8_length = 0;
+        if (decode_utf8_codepoint(text, offset, codepoint, utf8_length)) {
+            return utf8_length;
+        }
+    }
+
+    std::size_t last = offset + consumed;
+    while (last < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[last]))) {
+        ++last;
+    }
+    return last - offset;
 }
 
 bool decode_utf8_codepoint(std::string_view text, std::size_t offset, unsigned int& codepoint, std::size_t& length) {
