@@ -41,9 +41,13 @@ int main() {
     const std::string mongolian_free_variation_selector_1("\xE1\xA0\x8B", 3);
     const std::string mongolian_free_variation_selector_2("\xE1\xA0\x8C", 3);
     const std::string mongolian_free_variation_selector_3("\xE1\xA0\x8D", 3);
+    const std::string tag_char("\xF3\xA0\x80\x80", 4);
+    const std::string interlinear_annotation("\xEF\xBF\xB9", 3);
     assert(make_greeting(bom_prefix + "Alice" + bom_prefix) == "Hello, Alice!");
     assert(make_greeting(zero_width_space + "Alice" + zero_width_space + "Bob" + zero_width_space) == "Hello, Alice Bob!");
     assert(make_greeting(zero_width_non_joiner + "Alice" + zero_width_non_joiner + "Bob" + zero_width_non_joiner) == "Hello, Alice Bob!");
+    assert(make_greeting(tag_char + "Alice" + tag_char + " " + tag_char + "Bob" + tag_char) == "Hello, Alice Bob!");
+    assert(make_greeting(interlinear_annotation + "Alice" + interlinear_annotation + "Bob" + interlinear_annotation) == "Hello, Alice Bob!");
     assert(make_greeting(zero_width_joiner + "Alice" + zero_width_joiner + "Bob" + zero_width_joiner) == "Hello, Alice Bob!");
     assert(make_greeting(word_joiner + "Alice" + word_joiner + "Bob" + word_joiner) == "Hello, Alice Bob!");
     assert(make_greeting(invisible_times + "Alice" + invisible_times + "Bob" + invisible_times) == "Hello, Alice Bob!");

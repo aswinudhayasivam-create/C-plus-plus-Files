@@ -39,12 +39,25 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         case 0x205Fu:
         case 0x3000u:
         case 0xFEFFu:
+        case 0x06DDu:
+        case 0x070Fu:
+        case 0x0890u:
+        case 0x0891u:
+        case 0x08E2u:
+        case 0x110BDu:
+        case 0x110CDu:
+        case 0xFFF9u:
+        case 0xFFFAu:
+        case 0xFFFBu:
             return true;
         default:
             break;
     }
 
-    if (codepoint >= 0x180Bu && codepoint <= 0x180Du) {
+    if (codepoint >= 0x0600u && codepoint <= 0x0605u) {
+        return true;
+    }
+    if (codepoint >= 0x180Bu && codepoint <= 0x180Eu) {
         return true;
     }
     if (codepoint >= 0x2000u && codepoint <= 0x200Au) {
@@ -57,6 +70,24 @@ bool is_whitespace_codepoint(unsigned int codepoint) {
         return true;
     }
     if (codepoint >= 0x2060u && codepoint <= 0x206Fu) {
+        return true;
+    }
+    if (codepoint >= 0x13430u && codepoint <= 0x1343Fu) {
+        return true;
+    }
+    if (codepoint >= 0x1BCA0u && codepoint <= 0x1BCA3u) {
+        return true;
+    }
+    if (codepoint >= 0x1D173u && codepoint <= 0x1D17Au) {
+        return true;
+    }
+    if (codepoint >= 0xFE00u && codepoint <= 0xFE0Fu) {
+        return true;
+    }
+    if (codepoint >= 0xE0000u && codepoint <= 0xE007Fu) {
+        return true;
+    }
+    if (codepoint >= 0xE0100u && codepoint <= 0xE01EFu) {
         return true;
     }
 
