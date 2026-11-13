@@ -119,12 +119,12 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
         return 1;
     }
 
-    std::size_t consumed = 1;
-    while (offset + consumed < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[offset + consumed]))) {
-        ++consumed;
+    std::size_t length = 1;
+    while (offset + length < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[offset + length]))) {
+        ++length;
     }
 
-    if (consumed >= expected_length) {
+    if (length >= expected_length) {
         unsigned int codepoint = 0;
         std::size_t utf8_length = 0;
         if (decode_utf8_codepoint(text, offset, codepoint, utf8_length)) {
@@ -132,11 +132,7 @@ std::size_t invalid_utf8_sequence_length(std::string_view text, std::size_t offs
         }
     }
 
-    std::size_t last = offset + consumed;
-    while (last < text.size() && is_utf8_continuation(static_cast<unsigned char>(text[last]))) {
-        ++last;
-    }
-    return last - offset;
+    return length;
 }
 
 bool decode_utf8_codepoint(std::string_view text, std::size_t offset, unsigned int& codepoint, std::size_t& length) {
